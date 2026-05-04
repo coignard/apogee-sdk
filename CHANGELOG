@@ -1,0 +1,10 @@
+0.1.1
+
+  *  The carry into cs_hi is now suppressed on the final loop iteration using
+     the multiplier (1 - % / %%), exploiting fasmg integer division to produce
+     0 on the last step and 1 on all others. Matches the fix applied in the
+     apogee (0.2.3).
+
+0.1.0
+
+  *  Initial commit
