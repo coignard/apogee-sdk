@@ -35,7 +35,7 @@ macro format?.rka? start_addr:0000h
         repeat file_size
             load byte_val : byte from : 4 + % - 1
             cs_lo = cs_lo + byte_val
-            cs_hi = cs_hi + byte_val + (cs_lo shr 8)
+            cs_hi = cs_hi + (byte_val + (cs_lo shr 8)) * (1 - % / %%)
             cs_lo = cs_lo and 0FFh
             cs_hi = cs_hi and 0FFh
         end repeat
