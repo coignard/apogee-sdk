@@ -1,3 +1,7 @@
+0.1.2
+
+  *  dba macro renamed to str
+
 0.1.1
 
   *  The carry into cs_hi is now suppressed on the final loop iteration using
