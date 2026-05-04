@@ -28,7 +28,7 @@ macro print args&
     local skip, text_data
     JMP skip
 text_data:
-    dba args, 0
+    str args, 0
 skip:
     LXI H, text_data
     CALL MON_MSG_OUT

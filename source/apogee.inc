@@ -50,7 +50,7 @@ virtual at 0
     db 72h, 73h, 74h, 75h, 66h, 68h, 63h, 7Eh, 7Bh, 7Dh, 7Fh, 79h, 78h, 7Ch, 60h, 71h
 end virtual
 
-macro dba? args&
+macro str? args&
     iterate arg, args
         if arg eqtype ''
             local utf8, i, b, b2, code, mapped
@@ -92,7 +92,7 @@ macro dba? args&
     end iterate
 end macro
 
-struc dba? args&
+struc str? args&
     label . : byte
     db args
 end struc
