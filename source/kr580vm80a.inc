@@ -37,126 +37,6 @@ calminstruction DS? count*
     emit    count
 end calminstruction
 
-macro make_alu name, opcode
-    calminstruction name? src*
-        local   s
-        compute s, src
-        check   s eq s element 1 & s metadata 1 relativeto reg8
-        jno     error
-        compute s, s metadata 1 - reg8
-        emit    1, opcode or s
-        exit
-    error:
-        err     'incorrect argument'
-    end calminstruction
-end macro
-
-macro make_alu_imm name, opcode
-    calminstruction name? imm*
-        emit    1, opcode
-        emit    1, imm
-    end calminstruction
-end macro
-
-macro make_incdec name, opcode
-    calminstruction name? dst*
-        local   d
-        compute d, dst
-        check   d eq d element 1 & d metadata 1 relativeto reg8
-        jno     error
-        compute d, d metadata 1 - reg8
-        emit    1, opcode or (d shl 3)
-        exit
-    error:
-        err     'incorrect argument'
-    end calminstruction
-end macro
-
-macro make_rp_op name, opcode, r16_allowed
-    calminstruction name? rp*
-        local   r
-        compute r, rp
-        check   r eq r element 1 & r metadata 1 relativeto reg8
-        jyes    r8
-        check   r eq r element 1 & r metadata 1 relativeto reg16
-        jyes    r16
-        jump    error
-    r8:
-        compute r, r metadata 1 - reg8
-        check   (r = 0) | (r = 2) | (r = 4)
-        jno     error
-        emit    1, opcode or ((r shr 1) shl 4)
-        exit
-    r16:
-        compute r, r metadata 1 - reg16
-        check   r = r16_allowed
-        jno     error
-        emit    1, opcode or (3 shl 4)
-        exit
-    error:
-        err     'incorrect argument'
-    end calminstruction
-end macro
-
-macro make_rp_imm name, opcode, r16_allowed
-    calminstruction name? args&
-        local   rp, imm, r
-        match   rp=,imm, args
-        jno     error
-        compute r, rp
-        check   r eq r element 1 & r metadata 1 relativeto reg8
-        jyes    r8
-        check   r eq r element 1 & r metadata 1 relativeto reg16
-        jyes    r16
-        jump    error
-    r8:
-        compute r, r metadata 1 - reg8
-        check   (r = 0) | (r = 2) | (r = 4)
-        jno     error
-        emit    1, opcode or ((r shr 1) shl 4)
-        emit    2, imm
-        exit
-    r16:
-        compute r, r metadata 1 - reg16
-        check   r = r16_allowed
-        jno     error
-        emit    1, opcode or (3 shl 4)
-        emit    2, imm
-        exit
-    error:
-        err     'incorrect argument'
-    end calminstruction
-end macro
-
-macro make_bd name, opcode
-    calminstruction name? rp*
-        local   r
-        compute r, rp
-        check   r eq r element 1 & r metadata 1 relativeto reg8
-        jno     error
-        compute r, r metadata 1 - reg8
-        check   (r = 0) | (r = 2)
-        jno     error
-        emit    1, opcode or ((r shr 1) shl 4)
-        exit
-    error:
-        err     'incorrect argument'
-    end calminstruction
-end macro
-
-macro make_noarg name, opcode
-    calminstruction name?
-        emit    1, opcode
-    end calminstruction
-end macro
-
-macro make_addr name, opcode
-    calminstruction name? addr*
-        emit    1, opcode
-        emit    2, addr
-    end calminstruction
-end macro
-
 calminstruction MOV? args&
     local   dst, src, d, s
     match   dst=,src, args
@@ -201,85 +81,201 @@ error:
     err     'incorrect argument'
 end calminstruction
 
-make_alu    ADD, 10000000b
-make_alu    ADC, 10001000b
-make_alu    SUB, 10010000b
-make_alu    SBB, 10011000b
-make_alu    ANA, 10100000b
-make_alu    XRA, 10101000b
-make_alu    ORA, 10110000b
-make_alu    CMP, 10111000b
+calminstruction LXI? args&
+    local   rp, imm, r
+    match   rp=,imm, args
+    jno     error
+    compute r, rp
+    check   r eq r element 1 & r metadata 1 relativeto reg8
+    jyes    r8
+    check   r eq r element 1 & r metadata 1 relativeto reg16
+    jyes    r16
+    jump    error
+r8:
+    compute r, r metadata 1 - reg8
+    check   (r = 0) | (r = 2) | (r = 4)
+    jno     error
+    emit    1, 00000001b or ((r shr 1) shl 4)
+    emit    2, imm
+    exit
+r16:
+    compute r, r metadata 1 - reg16
+    check   r = 3
+    jno     error
+    emit    1, 00110001b
+    emit    2, imm
+    exit
+error:
+    err     'incorrect argument'
+end calminstruction
 
-make_alu_imm ADI, 0C6h
-make_alu_imm ACI, 0CEh
-make_alu_imm SUI, 0D6h
-make_alu_imm SBI, 0DEh
-make_alu_imm ANI, 0E6h
-make_alu_imm XRI, 0EEh
-make_alu_imm ORI, 0F6h
-make_alu_imm CPI, 0FEh
-make_alu_imm IN,  0DBh
-make_alu_imm OUT, 0D3h
+iterate <name, opcode>,\
+        ADD, 10000000b,\
+        ADC, 10001000b,\
+        SUB, 10010000b,\
+        SBB, 10011000b,\
+        ANA, 10100000b,\
+        XRA, 10101000b,\
+        ORA, 10110000b,\
+        CMP, 10111000b
 
-make_incdec INR, 00000100b
-make_incdec DCR, 00000101b
+    calminstruction name? src*
+        local   s
+        compute s, src
+        check   s eq s element 1 & s metadata 1 relativeto reg8
+        jno     error
+        compute s, s metadata 1 - reg8
+        emit    1, opcode or s
+        exit
+    error:
+        err     'incorrect argument'
+    end calminstruction
+end iterate
 
-make_rp_op  INX,  00000011b, 3
-make_rp_op  DCX,  00001011b, 3
-make_rp_op  DAD,  00001001b, 3
-make_rp_op  PUSH, 11000101b, 4
-make_rp_op  POP,  11000001b, 4
+iterate <name, opcode>,\
+        ADI, 0C6h,\
+        ACI, 0CEh,\
+        SUI, 0D6h,\
+        SBI, 0DEh,\
+        ANI, 0E6h,\
+        XRI, 0EEh,\
+        ORI, 0F6h,\
+        CPI, 0FEh,\
+        IN,  0DBh,\
+        OUT, 0D3h
 
-make_rp_imm LXI,  00000001b, 3
+    calminstruction name? imm*
+        emit    1, opcode
+        emit    1, imm
+    end calminstruction
+end iterate
 
-make_bd     LDAX, 00001010b
-make_bd     STAX, 00000010b
+iterate <name, opcode>,\
+        INR, 00000100b,\
+        DCR, 00000101b
 
-make_addr   JMP,  11000011b
-make_addr   JNZ,  11000010b
-make_addr   JZ,   11001010b
-make_addr   JNC,  11010010b
-make_addr   JC,   11011010b
-make_addr   JPO,  11100010b
-make_addr   JPE,  11101010b
-make_addr   JP,   11110010b
-make_addr   JM,   11111010b
-make_addr   CALL, 11001101b
-make_addr   CNZ,  11000100b
-make_addr   CZ,   11001100b
-make_addr   CNC,  11010100b
-make_addr   CC,   11011100b
-make_addr   CPO,  11100100b
-make_addr   CPE,  11101100b
-make_addr   CP,   11110100b
-make_addr   CM,   11111100b
-make_addr   LDA,  00111010b
-make_addr   STA,  00110010b
-make_addr   LHLD, 00101010b
-make_addr   SHLD, 00100010b
+    calminstruction name? dst*
+        local   d
+        compute d, dst
+        check   d eq d element 1 & d metadata 1 relativeto reg8
+        jno     error
+        compute d, d metadata 1 - reg8
+        emit    1, opcode or (d shl 3)
+        exit
+    error:
+        err     'incorrect argument'
+    end calminstruction
+end iterate
 
-make_noarg  RLC,  00000111b
-make_noarg  RRC,  00001111b
-make_noarg  RAL,  00010111b
-make_noarg  RAR,  00011111b
-make_noarg  CMA,  00101111b
-make_noarg  CMC,  00111111b
-make_noarg  STC,  00110111b
-make_noarg  DAA,  00100111b
-make_noarg  NOP,  00000000b
-make_noarg  HLT,  01110110b
-make_noarg  EI,   11111011b
-make_noarg  DI,   11110011b
-make_noarg  XCHG, 11101011b
-make_noarg  XTHL, 11100011b
-make_noarg  SPHL, 11111001b
-make_noarg  PCHL, 11101001b
-make_noarg  RET,  11001001b
-make_noarg  RNZ,  11000000b
-make_noarg  RZ,   11001000b
-make_noarg  RNC,  11010000b
-make_noarg  RC,   11011000b
-make_noarg  RPO,  11100000b
-make_noarg  RPE,  11101000b
-make_noarg  RP,   11110000b
-make_noarg  RM,   11111000b
+iterate <name, opcode, r16_allowed>,\
+        INX,  00000011b, 3,\
+        DCX,  00001011b, 3,\
+        DAD,  00001001b, 3,\
+        PUSH, 11000101b, 4,\
+        POP,  11000001b, 4
+
+    calminstruction name? rp*
+        local   r
+        compute r, rp
+        check   r eq r element 1 & r metadata 1 relativeto reg8
+        jyes    r8
+        check   r eq r element 1 & r metadata 1 relativeto reg16
+        jyes    r16
+        jump    error
+    r8:
+        compute r, r metadata 1 - reg8
+        check   (r = 0) | (r = 2) | (r = 4)
+        jno     error
+        emit    1, opcode or ((r shr 1) shl 4)
+        exit
+    r16:
+        compute r, r metadata 1 - reg16
+        check   r = r16_allowed
+        jno     error
+        emit    1, opcode or (3 shl 4)
+        exit
+    error:
+        err     'incorrect argument'
+    end calminstruction
+end iterate
+
+iterate <name, opcode>,\
+        LDAX, 00001010b,\
+        STAX, 00000010b
+
+    calminstruction name? rp*
+        local   r
+        compute r, rp
+        check   r eq r element 1 & r metadata 1 relativeto reg8
+        jno     error
+        compute r, r metadata 1 - reg8
+        check   (r = 0) | (r = 2)
+        jno     error
+        emit    1, opcode or ((r shr 1) shl 4)
+        exit
+    error:
+        err     'incorrect argument'
+    end calminstruction
+end iterate
+
+iterate <name, opcode>,\
+        JMP,  11000011b,\
+        JNZ,  11000010b,\
+        JZ,   11001010b,\
+        JNC,  11010010b,\
+        JC,   11011010b,\
+        JPO,  11100010b,\
+        JPE,  11101010b,\
+        JP,   11110010b,\
+        JM,   11111010b,\
+        CALL, 11001101b,\
+        CNZ,  11000100b,\
+        CZ,   11001100b,\
+        CNC,  11010100b,\
+        CC,   11011100b,\
+        CPO,  11100100b,\
+        CPE,  11101100b,\
+        CP,   11110100b,\
+        CM,   11111100b,\
+        LDA,  00111010b,\
+        STA,  00110010b,\
+        LHLD, 00101010b,\
+        SHLD, 00100010b
+
+    calminstruction name? addr*
+        emit    1, opcode
+        emit    2, addr
+    end calminstruction
+end iterate
+
+iterate <name, opcode>,\
+        RLC,  00000111b,\
+        RRC,  00001111b,\
+        RAL,  00010111b,\
+        RAR,  00011111b,\
+        CMA,  00101111b,\
+        CMC,  00111111b,\
+        STC,  00110111b,\
+        DAA,  00100111b,\
+        NOP,  00000000b,\
+        HLT,  01110110b,\
+        EI,   11111011b,\
+        DI,   11110011b,\
+        XCHG, 11101011b,\
+        XTHL, 11100011b,\
+        SPHL, 11111001b,\
+        PCHL, 11101001b,\
+        RET,  11001001b,\
+        RNZ,  11000000b,\
+        RZ,   11001000b,\
+        RNC,  11010000b,\
+        RC,   11011000b,\
+        RPO,  11100000b,\
+        RPE,  11101000b,\
+        RP,   11110000b,\
+        RM,   11111000b
+
+    calminstruction name?
+        emit    1, opcode
+    end calminstruction
+end iterate
