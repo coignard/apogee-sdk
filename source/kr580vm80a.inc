@@ -40,15 +40,19 @@ calminstruction MOV? args&
     compute d, dst
     check   d eq d element 1 & d metadata 1 relativeto reg8
     jno     error
-    compute d, d metadata 1 - reg8
     compute s, src
     check   s eq s element 1 & s metadata 1 relativeto reg8
     jno     error
+    check   d eq M & s eq M
+    jyes    use_hlt
+    compute d, d metadata 1 - reg8
     compute s, s metadata 1 - reg8
     emit    1, 01000000b or (d shl 3) or s
     exit
 error:
     err     'incorrect argument'
+use_hlt:
+    err     'this encodes as HLT; use HLT instead'
 end calminstruction
 
 calminstruction MVI? args&
