@@ -33,10 +33,6 @@ element reg16
 element SP?  : reg16 + 3
 element PSW? : reg16 + 4
 
-calminstruction DS? count*
-    emit    count
-end calminstruction
-
 calminstruction MOV? args&
     local   dst, src, d, s
     match   dst=,src, args
