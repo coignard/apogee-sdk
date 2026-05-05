@@ -94,7 +94,7 @@ end macro
 
 struc str? args&
     label . : byte
-    db args
+    str args
 end struc
 
 ; memory map
