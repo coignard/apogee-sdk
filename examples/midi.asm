@@ -3,7 +3,7 @@
 
 include '../source/kr580vm80a.inc'
 include '../source/apogee.inc'
-include '../source/cycles.inc'
+include '../source/t-states.inc'
 
 format rka
 
