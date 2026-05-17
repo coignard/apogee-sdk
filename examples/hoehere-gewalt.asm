@@ -13,7 +13,7 @@
 ;
 ; -- Part 1 ------------------------------------------------------
 ;
-;    Positief     Holpijp        8'
+;    Positif      Holpijp        8'
 ;                 Fluitdouce     4'
 ;
 ;    Hoofdm.      Roerfluit      8'
@@ -38,7 +38,7 @@
 ;
 ; -- Part 3 ------------------------------------------------------
 ;
-;    Positief  +  Praestant     8'
+;    Positif   +  Praestant     8'
 ;              +  Octaaf        4'
 ;              +  Speelfluit    3'
 ;              +  Sup: Octaaf   2'
