@@ -217,12 +217,14 @@ start:
     STA VV55_USR_CWR
 
 main_loop:
-    lxi b, 50
+    lxi b, 43
 .dly:
     dcx b
     mov a, b
     ora c
     jnz .dly
+    nop
+    mov a, a
 
     ; increment the 24-bit global tick counter with carry propagation
     lxi h, tick
