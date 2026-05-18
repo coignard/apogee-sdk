@@ -38,22 +38,22 @@
 ;
 ; -- Part 3 ------------------------------------------------------
 ;
-;    Positif   +  Praestant     8'
-;              +  Octaaf        4'
-;              +  Speelfluit    3'
-;              +  Sup: Octaaf   2'
+;    Positif   +  Praestant      8'
+;              +  Octaaf         4'
+;              +  Speelfluit     3'
+;              +  Sup: Octaaf    2'
 ;
-;    Hoofdm.   +  Praestant    16'
-;              +  Bourdon      16'
-;              +  Gemshoorn     4'
+;    Hoofdm.   +  Praestant     16'
+;              +  Bourdon       16'
+;              +  Gemshoorn      4'
 ;              +  Mixtuur
 ;              +  Scherp
-;              +  Trompet       4'
+;              +  Trompet        4'
 ;
-;    Pedaal    +  Principaal   32'
-;              +  Subbas       16'
-;              +  Octaaf        8'
-;              +  Trompet       8'
+;    Pedaal    +  Principaal    32'
+;              +  Subbas        16'
+;              +  Octaaf         8'
+;              +  Trompet        8'
 ;              +  Koppel Bovenkl. - Ped.
 ;              +  Koppel Hoofdm.  - Ped.
 ;              +  Koppel Pos.     - Ped.
