@@ -27,7 +27,7 @@
 ;
 ;    Pedaal       Praestant     16'
 ;                 Holfluit       8'
-;                 Quintpraest    6'
+;                 Quintpraestant 6'
 ;                 Octaaf         4'
 ;                 Holfluit       2'
 ;
@@ -41,7 +41,7 @@
 ;    Positif   +  Praestant      8'
 ;              +  Octaaf         4'
 ;              +  Speelfluit     3'
-;              +  Sup: Octaaf    2'
+;              +  Superoctaaf    2'
 ;
 ;    Hoofdm.   +  Praestant     16'
 ;              +  Bourdon       16'
