@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0
+
+### Changed
+
+- Moved from Zlib to LGPL
+
 ## 0.1.4
 
 ### Changed
